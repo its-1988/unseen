@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: unseen 1.0.0
+"
+"MIME-Version: 1.0
+"
+"Content-Type: text/plain; charset=UTF-8
+"
+"Content-Transfer-Encoding: 8bit
+"
+"Language: ru_RU
+"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);
+"
+
+msgid "Unseen messages"
+msgstr "Непрочитанные сообщения"
+
+msgid "Disabled"
+msgstr "Отключено"
+
+msgid "Per user on helpdesk; shared between technicians"
+msgstr "Индивидуально на портале; общее для техников"
+
+msgid "Per user"
+msgstr "Индивидуально для каждого пользователя"
+
+msgid "Inheritance of the parent entity"
+msgstr "Наследование от родительской организации"
+
+msgid "Mode"
+msgstr "Режим"
+
+msgid "Effective mode"
+msgstr "Действующий режим"
+
+msgid "Default mode (used when no entity defines one)"
+msgstr "Режим по умолчанию (если не задан для организации)"
+
+msgid "Per-entity overrides are configured in Administration > Entities, \"Unseen messages\" tab."
+msgstr "Переопределения по организациям настраиваются в «Администрирование → Организации», вкладка «Непрочитанные сообщения»."
+
+msgid "Setting saved"
+msgstr "Настройка сохранена"
+
+msgid "New messages"
+msgstr "Новые сообщения"
+
+msgid "No unseen messages"
+msgstr "Нет непрочитанных сообщений"
+
+msgid "and %d more"
+msgstr "и ещё %d"
+
+msgid "Mark all as read"
+msgstr "Отметить всё как прочитанное"

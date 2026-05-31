@@ -1,0 +1,164 @@
+/*
+ * -------------------------------------------------------------------------
+ * Unseen plugin for GLPI
+ * -------------------------------------------------------------------------
+ * @copyright Copyright (C) 2026 by the Unseen plugin team.
+ * @license   GPLv3+ https://www.gnu.org/licenses/gpl-3.0.html
+ * -------------------------------------------------------------------------
+ */
+
+/* ----------------------------------------------------------------------- */
+/* Header bell                                                              */
+/* ----------------------------------------------------------------------- */
+.plugin-unseen-nav {
+    display: flex;
+    align-items: center;
+    align-self: center;
+    margin: 0 .25rem 0 .5rem;
+}
+
+.plugin-unseen-nav .nav-link {
+    position: relative;
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border-radius: 50%;
+    opacity: .85;
+    transition: background-color .15s ease, opacity .15s ease;
+}
+
+.plugin-unseen-nav .nav-link:hover,
+.plugin-unseen-nav .nav-link[aria-expanded="true"] {
+    opacity: 1;
+    background-color: rgba(127, 127, 127, .15);
+}
+
+/* Wrapper around the icon so the badge sticks to the bell corner, not the
+   whole (square) button. */
+.plugin-unseen-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.plugin-unseen-nav .nav-link .ti {
+    font-size: 1.4rem;
+    line-height: 1;
+}
+
+.plugin-unseen-badge {
+    position: absolute;
+    top: -.4rem;
+    right: -.55rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 .25rem;
+    font-size: .7rem;
+    line-height: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 1rem;
+    pointer-events: none;
+}
+
+/* Subtle ring animation when there is something unseen. */
+.plugin-unseen-nav.has-unseen .plugin-unseen-icon {
+    animation: plugin-unseen-ring 2.4s ease-in-out 1;
+    transform-origin: 50% 0;
+}
+
+@keyframes plugin-unseen-ring {
+    0%, 60%, 100% { transform: rotate(0); }
+    5%, 15%, 25%  { transform: rotate(12deg); }
+    10%, 20%, 30% { transform: rotate(-12deg); }
+}
+
+.plugin-unseen-menu {
+    min-width: 320px;
+    max-width: 400px;
+    padding: 0;
+}
+
+.plugin-unseen-menu .card {
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+}
+
+.plugin-unseen-list {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.plugin-unseen-item .plugin-unseen-item-title {
+    font-weight: 600;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.plugin-unseen-item .plugin-unseen-item-meta {
+    font-size: .8rem;
+}
+
+.plugin-unseen-empty {
+    text-align: center;
+    color: var(--tblr-muted, #6c757d);
+}
+
+/* ----------------------------------------------------------------------- */
+/* Unseen rows in lists                                                     */
+/* ----------------------------------------------------------------------- */
+tr.plugin-unseen-row > td:first-child,
+tr.plugin-unseen-row > th:first-child {
+    box-shadow: inset 3px 0 0 0 var(--tblr-danger, #d63939);
+}
+
+tr.plugin-unseen-row > td {
+    font-weight: 600;
+}
+
+/* A small dot prepended to highlighted rows' first cell. */
+tr.plugin-unseen-row > td:first-child::before,
+tr.plugin-unseen-row > th:first-child::before {
+    content: "";
+    display: inline-block;
+    width: .5rem;
+    height: .5rem;
+    margin-right: .4rem;
+    border-radius: 50%;
+    background: var(--tblr-danger, #d63939);
+    vertical-align: middle;
+}
+
+/* ----------------------------------------------------------------------- */
+/* "New messages" timeline separator                                        */
+/* ----------------------------------------------------------------------- */
+.plugin-unseen-separator {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    width: 100%;
+    margin: .25rem 0 .85rem;
+}
+
+.plugin-unseen-separator-line {
+    flex: 1 1 auto;
+    height: 0;
+    border-top: 1px solid var(--tblr-danger, #d63939);
+    opacity: .55;
+}
+
+.plugin-unseen-separator-label {
+    flex: 0 0 auto;
+    color: var(--tblr-danger, #d63939);
+    font-weight: 600;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}

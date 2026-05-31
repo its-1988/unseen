@@ -1,0 +1,54 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: unseen 1.0.0
+"
+"MIME-Version: 1.0
+"
+"Content-Type: text/plain; charset=UTF-8
+"
+"Content-Transfer-Encoding: 8bit
+"
+"Language: 
+"
+
+msgid "Unseen messages"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Per user on helpdesk; shared between technicians"
+msgstr ""
+
+msgid "Per user"
+msgstr ""
+
+msgid "Inheritance of the parent entity"
+msgstr ""
+
+msgid "Mode"
+msgstr ""
+
+msgid "Effective mode"
+msgstr ""
+
+msgid "Default mode (used when no entity defines one)"
+msgstr ""
+
+msgid "Per-entity overrides are configured in Administration > Entities, \"Unseen messages\" tab."
+msgstr ""
+
+msgid "Setting saved"
+msgstr ""
+
+msgid "New messages"
+msgstr ""
+
+msgid "No unseen messages"
+msgstr ""
+
+msgid "and %d more"
+msgstr ""
+
+msgid "Mark all as read"
+msgstr ""
