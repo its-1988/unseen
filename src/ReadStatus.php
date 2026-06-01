@@ -338,15 +338,26 @@ class ReadStatus extends CommonDBTM
     }
 
     /**
-     * Involved + open tickets for the current user (optionally restricted to a
-     * given set of ids). Single source of truth shared by the bell and the list
-     * highlight, so both always agree on which tickets count.
+     * Tickets the current user should be notified about (optionally restricted
+     * to a given set of ids).
+     *
+     * Always includes the tickets the user is *involved* in — requester,
+     * assignee or observer, directly or through one of their groups. For
+     * technicians (central interface) it ALSO includes the open *unassigned*
+     * tickets sitting in the intake queue of their entities (no assigned
+     * technician, group or supplier), so a brand-new ticket dropped in the
+     * shared queue lights the bell even before anybody picks it up. Self-service
+     * (helpdesk) users only ever see their own tickets.
+     *
+     * Only open (not closed), non-deleted tickets within the user's active
+     * entities are considered. Single source of truth shared by the bell and the
+     * list highlight, so both always agree on which tickets count.
      *
      * @param int[]|null $restrict_ids Limit to these ids, or null for all.
      *
      * @return array<int, array{entities_id:int, name:string}>
      */
-    private static function getInvolvedCandidates(?array $restrict_ids, int $limit): array
+    private static function getWatchedCandidates(?array $restrict_ids, int $limit): array
     {
         /** @var \DBmysql $DB */
         global $DB;
@@ -362,31 +373,72 @@ class ReadStatus extends CommonDBTM
         $types  = [CommonITILActor::REQUESTER, CommonITILActor::ASSIGN, CommonITILActor::OBSERVER];
         $groups = $_SESSION['glpigroups'] ?? [];
 
+        // Tickets the user is personally an actor of.
         $user_sub = new QuerySubQuery([
             'SELECT' => 'tickets_id',
             'FROM'   => 'glpi_tickets_users',
             'WHERE'  => ['users_id' => $uid, 'type' => $types],
         ]);
+        $watched = [['glpi_tickets.id' => $user_sub]];
 
-        $involvement = [['glpi_tickets.id' => $user_sub]];
+        // Tickets one of the user's groups is an actor of.
         if (!empty($groups)) {
             $group_sub = new QuerySubQuery([
                 'SELECT' => 'tickets_id',
                 'FROM'   => 'glpi_groups_tickets',
                 'WHERE'  => ['groups_id' => $groups, 'type' => $types],
             ]);
-            $involvement[] = ['glpi_tickets.id' => $group_sub];
+            $watched[] = ['glpi_tickets.id' => $group_sub];
+        }
+
+        // Technicians also watch the unassigned intake queue of their entities:
+        // tickets with no assigned technician, group or supplier. Helpdesk users
+        // only see their own tickets, so this branch is central-only.
+        if (Session::getCurrentInterface() === 'central') {
+            $assign = CommonITILActor::ASSIGN;
+            $assigned_user_sub = new QuerySubQuery([
+                'SELECT' => 'tickets_id',
+                'FROM'   => 'glpi_tickets_users',
+                'WHERE'  => ['type' => $assign],
+            ]);
+            $assigned_group_sub = new QuerySubQuery([
+                'SELECT' => 'tickets_id',
+                'FROM'   => 'glpi_groups_tickets',
+                'WHERE'  => ['type' => $assign],
+            ]);
+            $assigned_supplier_sub = new QuerySubQuery([
+                'SELECT' => 'tickets_id',
+                'FROM'   => 'glpi_suppliers_tickets',
+                'WHERE'  => ['type' => $assign],
+            ]);
+            $watched[] = [
+                'NOT' => [
+                    'OR' => [
+                        ['glpi_tickets.id' => $assigned_user_sub],
+                        ['glpi_tickets.id' => $assigned_group_sub],
+                        ['glpi_tickets.id' => $assigned_supplier_sub],
+                    ],
+                ],
+            ];
         }
 
         $where = [
             'glpi_tickets.is_deleted' => 0,
             'glpi_tickets.status'     => ['<>', Ticket::CLOSED],
-            'OR'                      => $involvement,
+            'OR'                      => $watched,
         ];
+
+        // Restrict to the user's active entities. Pushed as a nested AND group
+        // (numeric key) so its own internal OR (recursive entities) survives — a
+        // plain `+=` would silently drop it, because $where already owns 'OR'.
+        $entity_crit = getEntitiesRestrictCriteria('glpi_tickets', '', '', true);
+        if (!empty($entity_crit)) {
+            $where[] = $entity_crit;
+        }
+
         if ($restrict_ids !== null) {
             $where['glpi_tickets.id'] = array_values(array_unique(array_map('intval', $restrict_ids)));
         }
-        $where += getEntitiesRestrictCriteria('glpi_tickets', '', '', true);
 
         $out = [];
         foreach ($DB->request([
@@ -421,7 +473,7 @@ class ReadStatus extends CommonDBTM
             return [];
         }
 
-        $candidates = self::getInvolvedCandidates($ids, count($ids));
+        $candidates = self::getWatchedCandidates($ids, count($ids));
 
         $tickets = [];
         foreach ($candidates as $id => $info) {
@@ -444,7 +496,7 @@ class ReadStatus extends CommonDBTM
      */
     public static function getUnseenTickets(int $limit = 50): array
     {
-        $candidates = self::getInvolvedCandidates(null, 500);
+        $candidates = self::getWatchedCandidates(null, 500);
         if (empty($candidates)) {
             return [];
         }

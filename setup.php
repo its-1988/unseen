@@ -32,7 +32,7 @@ use GlpiPlugin\Unseen\Config;
 use GlpiPlugin\Unseen\EntityConfig;
 use GlpiPlugin\Unseen\Timeline;
 
-define('PLUGIN_UNSEEN_VERSION', '1.0.1');
+define('PLUGIN_UNSEEN_VERSION', '1.0.2');
 
 // Minimal GLPI version, inclusive.
 define('PLUGIN_UNSEEN_MIN_GLPI', '11.0.0');
